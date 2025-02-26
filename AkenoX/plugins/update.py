@@ -21,11 +21,11 @@ async def update_and_restart(client, message):
 
         # Rebuild Docker image
         await message.reply_text("⚙️ Rebuilding Docker image...")
-        subprocess.run(["sudo", "docker", "build", "-t", "akenox-inline", "."], check=True)
+        subprocess.run(["docker", "build", "-t", "akenox-inline", "."], check=True)
 
         # Restart bot
         await message.reply_text("🚀 Restarting bot...")
-        subprocess.run(["sudo", "docker", "run", "-it", "--rm", "akenox-inline"], check=True)
+        subprocess.run(["docker", "run", "-it", "--rm", "akenox-inline"], check=True)
 
     except subprocess.CalledProcessError as e:
         await message.reply_text(f"❌ Update failed!\nError: {str(e)}")
