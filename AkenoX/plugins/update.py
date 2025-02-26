@@ -9,7 +9,7 @@ async def update_and_restart(client, message):
     status_message = await message.reply_text("🔄 Updating the bot...")
 
     try:
-        # Pull latest changes from GitHub
+        # Step 1: Pull latest changes from GitHub
         process = subprocess.run(["git", "pull"], capture_output=True, text=True)
         git_output = process.stdout + process.stderr
 
@@ -17,29 +17,25 @@ async def update_and_restart(client, message):
             await status_message.edit("✅ Already up to date!")
             return
         
-        # Rebuild the Docker container
-        await status_message.edit("🔄 Rebuilding Docker container...")
-        subprocess.run(["sudo", "docker", "build", "-t", "akenox-inline", "."], check=True)
+        # Step 2: Stop and remove the running container
+        await status_message.edit("🛑 Stopping and removing old container...")
+        subprocess.run(["sudo","docker", "stop", "akenox-inline"], check=False)
+        subprocess.run(["sudo","docker", "rm", "akenox-inline"], check=False)
+        await asyncio.sleep(2)
 
-        # Get running container ID
-        container_id = subprocess.run(
-            ["sudo", "docker", "ps", "-q", "-f", "ancestor=akenox-inline"],
-            capture_output=True, text=True
-        ).stdout.strip()
+        # Step 3: Rebuild the Docker container
+        await status_message.edit("🐳 Rebuilding Docker container...")
+        subprocess.run(["sudo","docker", "build", "-t", "akenox-inline", "."], check=True)
 
-        if not container_id:
-            await status_message.edit("⚠️ Error: No running container found!")
-            return
-
-        # Restart the container
+        # Step 4: Restart the bot
         await status_message.edit("🚀 Restarting the bot...")
-        subprocess.run(["sudo", "docker", "restart", container_id], check=True)
+        subprocess.run(["sudo","docker", "run", "-d", "--restart", "always", "--name", "akenox-inline", "akenox-inline"], check=True)
 
         await asyncio.sleep(2)
         await status_message.edit("✅ Update complete! Restarting...")
 
-    except Exception as e:
-        await status_message.edit(f"❌ Update failed:\n```\n{str(e)}\n```")
+    except subprocess.CalledProcessError as e:
+        await status_message.edit(f"❌ Update failed:\n```\n{e.stderr}\n```")
 
     finally:
         # Forcefully exit the process (Docker will restart it)
