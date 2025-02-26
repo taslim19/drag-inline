@@ -14,29 +14,33 @@ async def update_and_restart(client, message):
         git_output = process.stdout + process.stderr
 
         if "Already up to date." in git_output:
-            await status_message.edit(" Already up to date!")
+            await status_message.edit("✅ Already up to date!")
             return
         
-        # Rebuild the Docker container (Runs on the HOST machine, not inside the container)
-        await status_message.edit(" Rebuilding Docker container...")
+        # Rebuild the Docker container
+        await status_message.edit("🔄 Rebuilding Docker container...")
         subprocess.run(["sudo", "docker", "build", "-t", "akenox-inline", "."], check=True)
 
-        # Get container name from environment variable
-        container_name = os.getenv("CONTAINER_NAME")
-        if not container_name:
-            await status_message.edit("Error: CONTAINER_NAME environment variable is not set.")
+        # Get running container ID
+        container_id = subprocess.run(
+            ["sudo", "docker", "ps", "-q", "-f", "ancestor=akenox-inline"],
+            capture_output=True, text=True
+        ).stdout.strip()
+
+        if not container_id:
+            await status_message.edit("⚠️ Error: No running container found!")
             return
 
         # Restart the container
-        await status_message.edit("Restarting the bot...")
-        subprocess.run(["sudo", "docker", "restart", container_name], check=True)
+        await status_message.edit("🚀 Restarting the bot...")
+        subprocess.run(["sudo", "docker", "restart", container_id], check=True)
 
-        # Delay before exit
         await asyncio.sleep(2)
-        
+        await status_message.edit("✅ Update complete! Restarting...")
+
     except Exception as e:
         await status_message.edit(f"❌ Update failed:\n```\n{str(e)}\n```")
 
     finally:
-        # Stop the bot process so Docker restarts it
-        await client.stop()
+        # Forcefully exit the process (Docker will restart it)
+        os._exit(0)
