@@ -3,9 +3,7 @@ import subprocess
 import sys
 import asyncio
 from pyrogram import filters
-
 from AkenoX import *
-
 
 @RENDYDEV.user(prefix=["update"], filters=filters.me)
 async def update_and_restart(client, message):
