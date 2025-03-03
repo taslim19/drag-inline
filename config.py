@@ -16,6 +16,7 @@ bot_token = getenv("BOT_TOKEN", "")
 session = getenv("SESSION_STRING", "")
 mongo_url = getenv("MONGO_URL", "")
 log_channel = getenv("LOG_CHANNEL", 0)
+SUDO_USERS = list(map(int, getenv("SUDO_USERS", "").split()))
 
 # Please Don't edit this Damaged
 
