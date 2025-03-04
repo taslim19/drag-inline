@@ -16,7 +16,7 @@ bot_token = getenv("BOT_TOKEN", "")
 session = getenv("SESSION_STRING", "")
 mongo_url = getenv("MONGO_URL", "")
 log_channel = getenv("LOG_CHANNEL", 0)
-
+api_key = getenv("AKENO_KEY", "")
 # Please Don't edit this Damaged
 
 def loaded_cache(file_open=None):
