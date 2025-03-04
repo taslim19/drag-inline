@@ -2,12 +2,13 @@ from urllib.parse import quote
 import aiohttp
 from pyrogram.enums import ChatAction, ParseMode
 from AkenoX import *
+from config import api_key
 
 # Function to fetch Instagram reel video URL
 async def fetch_instagram_reel(video_url):
     encoded_url = quote(video_url)  # Encode the URL properly
     api_url = f"https://randydev-ryu-js.hf.space/api/v1/dl/instagram-v4?url={encoded_url}"
-    headers = {"x-api-key": "akeno_aO3VrXPCLGlho0ul6gkfO7C5bC8zTFUm"}
+    headers = {"x-api-key": api_key}
 
     async with aiohttp.ClientSession() as session:
         async with session.get(api_url, headers=headers) as response:
