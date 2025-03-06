@@ -1,6 +1,5 @@
 from pyrogram import filters
-from pyrogram.types import ChatAction
-from AkenoX import *
+from AkenoX import *  # Make sure this is correctly defined
 import aiohttp
 import io
 from config import api_key
@@ -21,11 +20,6 @@ async def fetch_image_from_flux(question):
 # Command handler for flux
 @RENDYDEV.user(prefix=["flux"], filters=(filters.me & ~filters.forwarded))
 async def flux_command(client, message):
-    chat_id = message.chat.id
-    
-    # Indicate uploading photo action
-    await app.send_chat_action(chat_id, ChatAction.UPLOAD_PHOTO)
-    
     if len(message.command) < 2:
         await message.reply_text("Exᴀᴍᴘʟᴇ ᴜsᴀɢᴇ: flux [your query]")
         return
