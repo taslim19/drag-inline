@@ -1,4 +1,5 @@
 from pyrogram import filters
+from pyrogram.types import ChatAction
 from AkenoX import *
 import aiohttp
 import io
