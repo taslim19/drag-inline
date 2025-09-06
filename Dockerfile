@@ -16,8 +16,7 @@ RUN apt -qq update && \
     libavfilter-dev \
     libavutil-dev \
     libswscale-dev \
-    libswresample-dev \
-    neofetch && \
+    libswresample-dev && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/
 
